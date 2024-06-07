@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button';
 
 export default function Home() {
   return (
-    <div className="text-center min-h-screen flex flex-col items-center justify-center bg-background text-foreground">
+    <main className="min-h-screen flex flex-col items-center justify-center p-4 bg-background text-foreground">
       <h1 className="text-4xl font-bold mb-4">Welcome to My Personal Site</h1>
-      <p>
-        Hi, I'm Jacob. I'm a passionate software engineer who enjoys exploring new technologies and sharing my experiences.
-        I am currently redoing my site so changes will come here and there.</p>
+      <p className="mb-8 text-center">
+        Hi, I&apos;m Jacob. I&apos;m a passionate software engineer who enjoys exploring new technologies and sharing my experiences.
+      </p>
       <div className="flex space-x-4">
         <Link href="/about">
           <Button>About Me</Button>
@@ -19,6 +19,6 @@ export default function Home() {
           <Button>Blog</Button>
         </Link> */}
       </div>
-    </div>
+    </main>
   );
 }
