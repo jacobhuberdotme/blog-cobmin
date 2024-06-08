@@ -4,8 +4,8 @@ import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
 import MyNavigationMenu from '@/components/my-navigation-menu';
 import { metadata as siteMetadata } from '@/lib/metadata';
-import { MDXClientProvider } from '@/components/mdx-provider';
 import { ThemeProvider } from '@/components/theme-provider';
+import MyFooter from '@/components/my-footer-menu';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
+        "min-h-screen bg-background font-sans antialiased flex flex-col",
         fontSans.variable
       )}>
         <ThemeProvider
@@ -28,11 +28,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           disableTransitionOnChange
         >
           <MyNavigationMenu />
-          <MDXClientProvider>
-            <div className="flex justify-center p-2">
-              <div className="w-full max-w-4xl">{children}</div>
+          <div className="flex-grow flex justify-center p-2">
+            <div className="w-full max-w-4xl">
+              {children} 
             </div>
-          </MDXClientProvider>
+          </div>
+          <MyFooter />
         </ThemeProvider>
       </body>
     </html>

@@ -1,9 +1,15 @@
 import fs from 'fs';
 import path from 'path';
-import { compileMDX } from 'next-mdx-remote/rsc';
+import matter from 'gray-matter';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import BlogPost from '@/components/BlogPost';
 
 interface Frontmatter {
   title: string;
+  date: string;
+  summary: string;
+  images: string;
 }
 
 export async function generateStaticParams() {
@@ -16,15 +22,11 @@ export async function generateStaticParams() {
 export default async function Page({ params }: { params: { slug: string } }) {
   const filePath = path.join(process.cwd(), 'src/data', `${params.slug}.mdx`);
   const source = fs.readFileSync(filePath, 'utf8');
-  const { content, frontmatter } = await compileMDX<Frontmatter>({
-    source,
-    options: { parseFrontmatter: true },
+
+  const { content, data: frontmatter } = matter(source);
+  const mdxSource: MDXRemoteSerializeResult = await serialize(content, {
+    scope: frontmatter,
   });
 
-  return (
-    <div>
-      <h1>{frontmatter.title}</h1>
-      {content}
-    </div>
-  );
+  return <BlogPost mdxContent={mdxSource} data={frontmatter as Frontmatter} />;
 }

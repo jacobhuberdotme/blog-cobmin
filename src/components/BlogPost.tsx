@@ -1,19 +1,18 @@
-"use client";
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import dynamic from 'next/dynamic';
 
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
-import { useMDXComponents } from '../mdx-components';
+const ClientBlogPost = dynamic(() => import('@/components/ClientBlogPost'), { ssr: false });
 
 interface BlogPostProps {
-  mdxSource: MDXRemoteSerializeResult;
-  data: { title: string };
+  mdxContent: MDXRemoteSerializeResult;
+  data: { 
+    title: string;
+    date: string;
+    summary: string;
+    images: string;
+  };
 }
 
-export default function BlogPost({ mdxSource, data }: BlogPostProps) {
-  const components = useMDXComponents({});
-  return (
-    <div>
-      <h1>{data.title}</h1>
-      <MDXRemote {...mdxSource} components={components} />
-    </div>
-  );
+export default function BlogPost({ mdxContent, data }: BlogPostProps) {
+  return <ClientBlogPost mdxContent={mdxContent} data={data} />;
 }
