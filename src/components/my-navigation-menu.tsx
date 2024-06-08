@@ -27,7 +27,14 @@ export default function MyNavigationMenu() {
           />
         </Link>
       </div>
-      <NavigationMenuList className="flex items-center space-x-4">
+      <NavigationMenuList className="flex items-center space-x-2">
+        <NavigationMenuItem>
+          <Link href="/blog" legacyBehavior passHref>
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Blog
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/about" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>

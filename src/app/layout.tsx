@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from 'next';
+import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import '@/styles/globals.css';
 import { cn } from '@/lib/utils';
@@ -18,9 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable
-          )}>
+        "min-h-screen bg-background font-sans antialiased",
+        fontSans.variable
+      )}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MyNavigationMenu />
           <MDXClientProvider>
             <div className="flex justify-center p-2">
-              <main className="w-full max-w-4xl">{children}</main>
+              <div className="w-full max-w-4xl">{children}</div>
             </div>
           </MDXClientProvider>
         </ThemeProvider>
