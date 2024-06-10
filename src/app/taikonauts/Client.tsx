@@ -1,18 +1,12 @@
-// src/app/taikonauts/ClientNFTs.tsx
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import dynamic from 'next/dynamic';
 import { NFT } from '../../types/nft';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/nft-card';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '../../components/ui/hover-card';
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '../../components/ui/drawer';
-import Loading from './loading';
-
-const LazyImage = dynamic(() => import('../../components/LazyImage'), {
-  loading: () => <div className="relative w-full h-full bg-gray-200 animate-pulse rounded-lg" />, // Ensure rounded-lg
-  ssr: false,
-});
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const NFTsComponent = ({ nfts }: { nfts: NFT[] }) => (
   <div className="container mx-auto p-4">
@@ -25,8 +19,8 @@ const NFTsComponent = ({ nfts }: { nfts: NFT[] }) => (
               <Card>
                 <CardContent>
                   <div className="relative w-full pb-[100%]"> {/* Maintain aspect ratio */}
-                    <LazyImage
-                      src={`https://qk5zmcowye2gfiufzx5l232ltb7ikz64wjpwc2d3uiwzthhjfpsa.arweave.net/gruWCdbBNGKihc36vW9LmH6FZ9yyX2Foe6ItmZzpK-Q/${nft.edition}.gif`}
+                    <img
+                      src={nft.imageUrl}
                       alt={`NFT ${nft.edition}`}
                       className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
                     />
@@ -70,11 +64,12 @@ const NFTsComponent = ({ nfts }: { nfts: NFT[] }) => (
   </div>
 );
 
-const ClientNFTs = ({ initialNfts }: { initialNfts: NFT[] }) => {
-  const [nfts, setNfts] = useState<NFT[]>(initialNfts.slice(0, 100));
+const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], initialTokenInfo: any }) => {
+  const [nfts, setNfts] = useState<NFT[]>(initialNfts);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const observer = useRef<IntersectionObserver>();
+  const [tokenInfo, setTokenInfo] = useState<any>(initialTokenInfo);
 
   const lastElementRef = useCallback((node: HTMLElement | null) => {
     if (loading) return;
@@ -88,28 +83,67 @@ const ClientNFTs = ({ initialNfts }: { initialNfts: NFT[] }) => {
   }, [loading]);
 
   useEffect(() => {
-    setLoading(true);
-    fetch('/data/taikonautsrarity.json', { cache: 'no-store' })
-      .then((response) => response.json())
-      .then((data: NFT[]) => {
-        setNfts(prevNfts => [...prevNfts, ...data.slice(page * 100, (page + 1) * 100)]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching NFT data:', error);
-        setLoading(false);
-      });
+    if (page > 1) {
+      setLoading(true);
+      fetch(`/api/nfts?page=${page}`)
+        .then((response) => response.json())
+        .then(({ nfts: newNfts }) => {
+          setNfts(prevNfts => [...prevNfts, ...newNfts]);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching NFT data:', error);
+          setLoading(false);
+        });
+    }
   }, [page]);
-
-  if (loading && page === 1) {
-    return <Loading />;
-  }
 
   return (
     <>
-      <NFTsComponent nfts={nfts} />
-      {loading && <div className="text-center py-4">Loading more NFTs...</div>}
-      <div ref={lastElementRef} />
+      {!tokenInfo && (
+        <div className="container mx-auto p-4 mb-8">
+          <div className="animate-pulse">
+            <Skeleton className="h-8 w-3/4 mx-auto mb-4" />
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-1/2 mx-auto" />
+            </div>
+            <div className="my-4">
+              <Skeleton className="h-4 w-full" />
+            </div>
+            <div className="flex h-5 items-center space-x-4 text-sm">
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/4" />
+              <Skeleton className="h-4 w-1/4" />
+            </div>
+            <div className="my-4">
+              <Skeleton className="h-4 w-full" />
+            </div>
+          </div>
+        </div>
+      )}
+      {tokenInfo && (
+        <div className="container text-center mx-auto p-4 mb-8">
+          <h1 className="text-3xl font-bold mb-4">{tokenInfo.token_name}</h1>
+          <div className="space-y-1">
+            <p><strong>Token Address:</strong> {tokenInfo.token_address}</p>
+          </div>
+          <Separator className="my-4" />
+          <div className="flex justify-center items-center space-x-4 text-sm">
+            <div><strong>Symbol:</strong> {tokenInfo.token_symbol}</div>
+            <Separator orientation="vertical" />
+            <div><strong>Supply:</strong> {tokenInfo.total_supply}</div>
+            <Separator orientation="vertical" />
+            <div><strong>Holders:</strong> {tokenInfo.total_holders}</div>
+            <Separator orientation="vertical" />
+            <div><strong>Transfers:</strong> {tokenInfo.total_transfers}</div>
+          </div>
+          <Separator className="my-4" />
+          <NFTsComponent nfts={nfts} />
+          {loading && <div className="text-center py-4">Loading...</div>}
+          <div ref={lastElementRef} />
+        </div>
+      )}
     </>
   );
 };

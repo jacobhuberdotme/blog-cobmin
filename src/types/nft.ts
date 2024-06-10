@@ -7,6 +7,7 @@ export interface AttributeRarity {
   export interface NFT {
     edition: number;
     rarity: number;
+    imageUrl: string;
     totalRarity: string;
     attributeRarities: AttributeRarity[];
   }
