@@ -15,7 +15,7 @@ const LazyImage: FC<LazyImageProps> = ({ src, alt, className }) => {
       src={src}
       alt={alt}
       loading="lazy"
-      className={`w-full h-full object-cover rounded-lg ${className}`}
+      className={`w-full h-full object-cover rounded-lg ${className}`} // Ensure rounded-lg and object-cover
     />
   );
 };

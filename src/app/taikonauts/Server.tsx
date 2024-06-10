@@ -9,7 +9,7 @@ const getNfts = cache(async (): Promise<NFT[]> => {
   const filePath = join(process.cwd(), 'public', 'data', 'taikonautsrarity.json');
   const fileContents = await fs.readFile(filePath, 'utf8');
   const data: NFT[] = JSON.parse(fileContents);
-  return data.slice(0, 1000); // Load only the first 100 NFTs
+  return data;
 });
 
 export const preloadNfts = () => {
