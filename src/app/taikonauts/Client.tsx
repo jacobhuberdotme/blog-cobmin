@@ -3,17 +3,20 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { NFT } from '../../types/nft';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/nft-card';
-import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription } from '../../components/ui/drawer';
+import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerClose } from '../../components/ui/drawer';
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import dynamic from 'next/dynamic';
 
-const NFTsComponent = ({ nfts }: { nfts: NFT[] }) => (
+const NFTDrawer = dynamic(() => import('../../components/NFTDrawer'), { ssr: false });
+
+const NFTsComponent = ({ nfts, openDrawer }: { nfts: NFT[], openDrawer: (nft: NFT) => void }) => (
   <div className="container mx-auto p-4">
     <h1 className="text-3xl font-bold text-center mb-8">Taikonauts NFTs by Rarity</h1>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       {nfts.map((nft) => (
         <div key={nft.edition} className="relative">
-          <Card>
+          <Card onClick={() => openDrawer(nft)}>
             <CardContent>
               <div className="relative w-full pb-[100%]"> {/* Maintain aspect ratio */}
                 <img
@@ -28,24 +31,6 @@ const NFTsComponent = ({ nfts }: { nfts: NFT[] }) => (
               <CardDescription>Rarity: {nft.rarity}</CardDescription>
             </CardHeader>
           </Card>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="absolute inset-0 w-full h-full"></div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Edition: {nft.edition}</DrawerTitle>
-                <DrawerDescription>Rarity: {nft.rarity}</DrawerDescription>
-              </DrawerHeader>
-              <div className="p-4">
-                {nft.attributeRarities.map((attr, index) => (
-                  <p key={index} className="text-sm">
-                    {attr.trait_type}: {attr.value} [{attr.rarity}%]
-                  </p>
-                ))}
-              </div>
-            </DrawerContent>
-          </Drawer>
         </div>
       ))}
     </div>
@@ -58,6 +43,13 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
   const [page, setPage] = useState(1);
   const observer = useRef<IntersectionObserver>();
   const [tokenInfo, setTokenInfo] = useState<any>(initialTokenInfo);
+  const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const openDrawer = (nft: NFT) => {
+    setSelectedNFT(nft);
+    setIsDrawerOpen(true);
+  };
 
   const lastElementRef = useCallback((node: HTMLElement | null) => {
     if (loading) return;
@@ -127,10 +119,27 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
             <div><strong>Transfers:</strong> {tokenInfo.total_transfers}</div>
           </div>
           <Separator className="my-4" />
-          <NFTsComponent nfts={nfts} />
+          <NFTsComponent nfts={nfts} openDrawer={openDrawer} />
           {loading && <div className="text-center py-4">Loading...</div>}
           <div ref={lastElementRef} />
         </div>
+      )}
+      {selectedNFT && (
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerContent>
+            <div className="px-4">
+            <h3 className="text-lg mt-4">Edition: {selectedNFT.edition} Rarity: {selectedNFT.rarity}</h3>
+            <h3 className="text-lg font-bold mt-4">Properties</h3>
+              {selectedNFT.attributeRarities.map((attr, index) => (
+                <p key={index} className="text-sm">
+                  {attr.trait_type}: {attr.value} [{attr.rarity}%]
+                </p>
+              ))}
+              <h3 className="text-lg font-bold mt-4">Holder</h3>
+              <NFTDrawer nft={selectedNFT} />
+            </div>
+          </DrawerContent>
+        </Drawer>
       )}
     </>
   );

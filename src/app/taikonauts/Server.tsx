@@ -33,10 +33,20 @@ export const preloadTokenInfo = () => {
 
 export async function ServerNFTs(page: number = 1) {
   const nfts = await getNfts();
-  const paginatedNfts = nfts.slice((page - 1) * 300, page * 300).map(nft => ({
+  const paginatedNfts = nfts.slice((page - 1) * 100, page * 100).map(nft => ({
     ...nft,
     imageUrl: generateImageUrl(nft)
   }));
   const tokenInfo = await getTokenInfo();
   return { nfts: paginatedNfts, tokenInfo };
+}
+
+export async function getHolder(tokenId: number) {
+  const response = await fetch(`https://api.routescan.io/v2/network/mainnet/evm/167000/erc721-transfers?tokenAddress=0x56b0d8d04de22f2539945258ddb288c123026775&tokenId=${tokenId}&limit=1`);
+  const data = await response.json();
+  if (data.items && data.items.length > 0) {
+    return data.items[0].to;
+  } else {
+    throw new Error('No holder found for this token ID');
+  }
 }
