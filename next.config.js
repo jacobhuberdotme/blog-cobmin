@@ -4,7 +4,16 @@ const withMDX = require('@next/mdx')()
 const nextConfig = {
   // Configure `pageExtensions` to include MDX files
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
-  // Optionally, add any other Next.js config below
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'qk5zmcowye2gfiufzx5l232ltb7ikz64wjpwc2d3uiwzthhjfpsa.arweave.net',
+        port: '',
+        pathname: '/gruWCdbBNGKihc36vW9LmH6FZ9yyX2Foe6ItmZzpK-Q/**',
+      },
+    ],
+  },
 }
  
 module.exports = withMDX(nextConfig)
