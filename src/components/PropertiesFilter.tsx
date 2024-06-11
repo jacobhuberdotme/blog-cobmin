@@ -1,5 +1,3 @@
-// components/PropertiesFilter.tsx
-
 import * as React from 'react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';

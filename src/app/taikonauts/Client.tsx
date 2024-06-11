@@ -27,7 +27,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
 
   const observer = useRef<IntersectionObserver>();
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const pathname = usePathname();
 
   const openDrawer = (nft: NFT) => {
@@ -60,7 +60,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
   };
 
   const updateURLAndFetch = (params: URLSearchParams) => {
-    replace(`${pathname}?${params.toString()}`);
+    replace(`${pathname}?${params.toString()}`, { scroll: false });
     fetch(`/api/nfts?${params.toString()}`)
       .then((response) => response.json())
       .then(({ nfts: updatedNfts }) => {

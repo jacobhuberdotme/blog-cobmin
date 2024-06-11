@@ -10,11 +10,13 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
   { nfts: NFT[], openDrawer: (nft: NFT) => void, handleSearch: (term: string) => void, handleSortChange: (value: string) => void, sort: string, lastElementRef: (node: HTMLElement | null) => void }) => (
   <div className="container mx-auto p-4">
     <div className="flex justify-between items-center mb-4">
-      <Input
-        type="number"
+    <Input
+        type="text"  // Change type to text
+        inputMode="numeric"  // Ensure numeric keyboard on mobile
+        pattern="\d*"  // Pattern to restrict input to digits only
         placeholder="Search by Edition"
         onChange={(e) => handleSearch(e.target.value)}
-        className="w-1/4 mr-4"
+        className="w-1/4 mr-4 text-lg"  // Ensure font size is large enough to avoid zoom
       />
       <Select onValueChange={handleSortChange} value={sort}>
         <SelectTrigger className="w-[180px]">
@@ -54,3 +56,4 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
 );
 
 export default NFTsComponent;
+
