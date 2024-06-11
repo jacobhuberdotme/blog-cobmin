@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: 'Taikonauts',
       images: [
         {
-          url: 'https://x.com/taikonautsnft/header_photo',
+          url: 'https://www.cobmin.com/taikonauts-image.png', // Ensure this path is correct
           width: 800,
           height: 600,
           alt: 'Taikonauts Header Photo',
@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: 'Marching to the beat of the 🥁 & exploring the unknown | First NFT collection on Taiko',
       images: [
         {
-          url: 'https://x.com/taikonautsnft/header_photo',
+          url: 'https://www.cobmin.com/taikonauts-image.png', // Ensure this path is correct
           width: 800,
           height: 600,
           alt: 'Taikonauts Header Photo',
