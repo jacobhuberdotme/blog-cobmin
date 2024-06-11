@@ -9,16 +9,26 @@ const NFTDrawerComponent = ({ selectedNFT, isDrawerOpen, setIsDrawerOpen }: { se
     {selectedNFT && (
       <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent>
-          <div className="px-4">
-            <h3 className="text-lg mt-4">#{selectedNFT.edition} Rarity: {selectedNFT.rarity}</h3>
-            <h3 className="text-lg font-bold mt-4">Properties</h3>
-            {selectedNFT.attributeRarities.map((attr, index) => (
-              <p key={index} className="text-sm">
-                {attr.trait_type}: {attr.value} [{attr.rarity}%]
-              </p>
-            ))}
-            <h3 className="text-lg font-bold mt-4">Information</h3>
-            <NFTDrawer nft={selectedNFT} />
+          <div className="px-4 py-2">
+            <div className="flex justify-between items-center">
+              <h3 className="text-xl font-bold">{selectedNFT.name}</h3>
+              <p className="text-md">Rarity: {selectedNFT.rarity}</p>
+            </div>
+            <p className="text-sm text-gray-600">{selectedNFT.description}</p>
+            <div className="flex flex-col">
+              <div>
+                <h4 className="text-lg font-semibold">Properties</h4>
+                {selectedNFT.attributeRarities.map((attr, index) => (
+                  <p key={index} className="text-sm">
+                    {attr.trait_type}: {attr.value} [{attr.rarity}%]
+                  </p>
+                ))}
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold">Information</h4>
+                <NFTDrawer nft={selectedNFT} />
+              </div>
+            </div>
           </div>
         </DrawerContent>
       </Drawer>
