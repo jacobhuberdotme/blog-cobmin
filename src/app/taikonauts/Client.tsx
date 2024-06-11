@@ -227,7 +227,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
                   {attr.trait_type}: {attr.value} [{attr.rarity}%]
                 </p>
               ))}
-              <h3 className="text-lg font-bold mt-4">Holder</h3>
+              <h3 className="text-lg font-bold mt-4">Information</h3>
               <NFTDrawer nft={selectedNFT} />
             </div>
           </DrawerContent>
