@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: 'Taikonauts',
       images: [
         {
-          url: 'https://www.cobmin.com/taikonauts-image.png', // Ensure this path is correct
+          url: 'https://www.cobmin.com/taikonauts-image.png',
           width: 800,
           height: 600,
           alt: 'Taikonauts Header Photo',
