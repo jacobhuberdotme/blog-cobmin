@@ -54,14 +54,6 @@ const calculateTraitCounts = (nfts: NFT[]) => {
   return traitCounts;
 };
 
-const fetchAdditionalNFTData = async (edition: number) => {
-  const response = await fetch(`https://ww3du5ng2zgic6carv7dw3itjgagadeatq6fl3xjwplj4emuxc5a.arweave.net/tbY6dabWTIF4QI1-O20TSYBgDICcPFXu6bPWnhGUuLo/${edition}.json`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch additional NFT data');
-  }
-  return response.json();
-};
-
 export const preloadNfts = () => {
   void getNfts();
 };
@@ -105,18 +97,10 @@ export async function ServerNFTs(page: number = 1, query?: string, sort?: string
 
   const traitCounts = calculateTraitCounts(nfts);
 
-  const paginatedNfts = await Promise.all(
-    filteredNfts.slice((page - 1) * 200, page * 200).map(async (nft) => {
-      const additionalData = await fetchAdditionalNFTData(nft.edition);
-      return {
-        ...nft,
-        imageUrl: generateImageUrl(nft),
-        name: additionalData.name,
-        description: additionalData.description
-      };
-    })
-  );
-
+  const paginatedNfts = filteredNfts.slice((page - 1) * 100, page * 100).map(nft => ({
+    ...nft,
+    imageUrl: generateImageUrl(nft),
+  }));
   const tokenInfo = await getTokenInfo();
   return { nfts: paginatedNfts, tokenInfo, totalResults: filteredNfts.length, traitCounts };
 }

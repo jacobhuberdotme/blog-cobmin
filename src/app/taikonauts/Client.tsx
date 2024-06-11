@@ -12,7 +12,13 @@ import TokenInfo from '@/components/TokenInfo';
 import Banner from '@/components/Banner';
 import NFTDrawerComponent from '@/components/NFTDrawerComponent';
 
-const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number, values: Record<string, { count: number, rarity: string }> }> }) => {
+const fetchNFTData = async (edition: number) => {
+  const response = await fetch(`https://ww3du5ng2zgic6carv7dw3itjgagadeatq6fl3xjwplj4emuxc5a.arweave.net/tbY6dabWTIF4QI1-O20TSYBgDICcPFXu6bPWnhGUuLo/${edition}.json`);
+  const data = await response.json();
+  return data;
+};
+
+const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number; values: Record<string, { count: number, rarity: string }> }> }) => {
   const [nfts, setNfts] = useState<NFT[]>(initialNfts);
   const [loading, setLoading] = useState(false);
   const [tokenInfo, setTokenInfo] = useState<any>(initialTokenInfo);
@@ -22,15 +28,17 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
   const [sort, setSort] = useState('number-asc');
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedProperties, setSelectedProperties] = useState<Record<string, string[]>>({});
+  const [query, setQuery] = useState<string | null>(null);
 
   const observer = useRef<IntersectionObserver>();
   const searchParams = useSearchParams();
   const { replace, push } = useRouter();
   const pathname = usePathname();
 
-  const openDrawer = (nft: NFT) => {
-    setSelectedNFT(nft);
+  const openDrawer = async (nft: NFT) => {
     setIsDrawerOpen(true);
+    const data = await fetchNFTData(nft.edition);
+    setSelectedNFT({ ...nft, name: data.name, description: data.description });
   };
 
   const lastElementRef = useCallback((node: HTMLElement | null) => {
@@ -42,12 +50,21 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       }
     });
     if (node) observer.current.observe(node);
-  }, [loading, hasMore]);
+  }, [loading, hasMore, query, selectedProperties, sort]);
 
   const fetchMoreNFTs = async () => {
     setLoading(true);
-    const params = new URLSearchParams(searchParams);
-    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 200) + 1}&sort=${sort}&${params.toString()}`);
+    const params = new URLSearchParams();
+    if (query) {
+      params.set('query', query);
+    }
+    Object.keys(selectedProperties).forEach(traitType => {
+      selectedProperties[traitType].forEach(value => {
+        params.append(`filter_${traitType}`, value);
+      });
+    });
+    params.set('sort', sort);
+    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 100) + 1}&${params.toString()}`);
     const data = await response.json();
     if (data.nfts.length === 0) {
       setHasMore(false);
@@ -63,7 +80,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       .then((response) => response.json())
       .then(({ nfts: updatedNfts }) => {
         setNfts(updatedNfts);
-        setHasMore(false);
+        setHasMore(updatedNfts.length === 100);
       })
       .catch((error) => {
         console.error('Error fetching updated NFT data:', error);
@@ -71,7 +88,8 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
   };
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    const params = new URLSearchParams(searchParams);
+    setQuery(term);
+    const params = new URLSearchParams();
     if (term) {
       params.set('query', term);
     } else {
@@ -88,10 +106,10 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
 
   const handleSortChange = (value: string) => {
     setSort(value);
-    const params = new URLSearchParams(searchParams);
+    const params = new URLSearchParams();
     params.set('sort', value);
-    if (searchParams.get('query')) {
-      params.set('query', searchParams.get('query')!);
+    if (query) {
+      params.set('query', query);
     }
     Object.keys(selectedProperties).forEach(traitType => {
       selectedProperties[traitType].forEach(property => {
@@ -110,8 +128,8 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       });
     });
     params.set('sort', sort);
-    if (searchParams.get('query')) {
-      params.set('query', searchParams.get('query')!);
+    if (query) {
+      params.set('query', query);
     }
     updateURLAndFetch(params);
   };
