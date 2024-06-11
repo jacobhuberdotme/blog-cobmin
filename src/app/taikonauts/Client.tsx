@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import NFTsComponent from '@/components/NFTsComponent';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 
 const NFTDrawer = dynamic(() => import('../../components/NFTDrawer'), { ssr: false });
 
@@ -184,12 +185,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
         </Drawer>
       )}
       {showScrollToTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-4 right-4 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700"
-        >
-          <ArrowUpIcon className="h-6 w-6" />
-        </button>
+        <ScrollToTopButton onClick={scrollToTop} />
       )}
     </>
   );
