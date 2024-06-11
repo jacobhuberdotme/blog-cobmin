@@ -1,5 +1,3 @@
-// components/NFTsComponent.tsx
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -10,13 +8,13 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
   { nfts: NFT[], openDrawer: (nft: NFT) => void, handleSearch: (term: string) => void, handleSortChange: (value: string) => void, sort: string, lastElementRef: (node: HTMLElement | null) => void }) => (
   <div className="container mx-auto p-4">
     <div className="flex justify-between items-center mb-4">
-    <Input
-        type="text"  // Change type to text
-        inputMode="numeric"  // Ensure numeric keyboard on mobile
-        pattern="\d*"  // Pattern to restrict input to digits only
+      <Input
+        type="text"
+        inputMode="numeric"
+        pattern="\d*"
         placeholder="Search by Edition"
         onChange={(e) => handleSearch(e.target.value)}
-        className="w-1/4 mr-4 text-lg"  // Ensure font size is large enough to avoid zoom
+        className="w-1/4 mr-4 text-lg"
       />
       <Select onValueChange={handleSortChange} value={sort}>
         <SelectTrigger className="w-[180px]">
@@ -32,7 +30,7 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
       {nfts.map((nft) => (
-        <div key={nft.edition} className="relative">
+        <div key={nft.edition} className="relative card"> {/* Add "card" class here */}
           <Card onClick={() => openDrawer(nft)}>
             <CardContent>
               <div className="relative w-full pb-[100%]"> {/* Maintain aspect ratio */}
@@ -56,4 +54,3 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
 );
 
 export default NFTsComponent;
-

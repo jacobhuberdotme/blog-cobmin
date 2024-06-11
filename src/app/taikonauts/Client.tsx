@@ -2,17 +2,15 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { NFT } from '../../types/nft';
-import dynamic from 'next/dynamic';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import NFTsComponent from '@/components/NFTsComponent';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
 import PropertiesFilter from '@/components/PropertiesFilter';
-
-const NFTDrawer = dynamic(() => import('../../components/NFTDrawer'), { ssr: false });
+import TokenInfo from '@/components/TokenInfo';
+import Banner from '@/components/Banner';
+import NFTDrawerComponent from '@/components/NFTDrawerComponent';
 
 const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], initialTokenInfo: any }) => {
   const [nfts, setNfts] = useState<NFT[]>(initialNfts);
@@ -138,26 +136,10 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
 
   return (
     <>
+      <Banner />
       <div className="container mx-auto p-4 mb-8 text-center">
         <h1 className="text-3xl font-bold mb-4">Taikonauts</h1>
-        {tokenInfo && (
-          <>
-            <div className="space-y-1 mb-4">
-              <p className="break-words"><strong>Token Address:</strong> {tokenInfo.token_address}</p>
-            </div>
-            <Separator className="my-4" />
-            <div className="flex justify-center items-center space-x-4 text-sm mb-4">
-              <div><strong>Symbol:</strong> {tokenInfo.token_symbol}</div>
-              <Separator orientation="vertical" />
-              <div><strong>Supply:</strong> {parseInt(tokenInfo.total_supply) + 1}</div>
-              <Separator orientation="vertical" />
-              <div><strong>Holders:</strong> {tokenInfo.total_holders}</div>
-              <Separator orientation="vertical" />
-              <div><strong>Transfers:</strong> {tokenInfo.total_transfers}</div>
-            </div>
-            <Separator className="my-4" />
-          </>
-        )}
+        {tokenInfo && <TokenInfo tokenInfo={tokenInfo} />}
         {tokenInfo && (
           <>
             <PropertiesFilter nfts={nfts} selectedProperties={selectedProperties} onChange={handlePropertiesFilterChange} />
@@ -195,23 +177,11 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
         </div>
       )}
       {loading && <div className="text-center py-4">Loading...</div>}
-      {selectedNFT && (
-        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-          <DrawerContent>
-            <div className="px-4">
-              <h3 className="text-lg mt-4">#{selectedNFT.edition} Rarity: {selectedNFT.rarity}</h3>
-              <h3 className="text-lg font-bold mt-4">Properties</h3>
-              {selectedNFT.attributeRarities.map((attr, index) => (
-                <p key={index} className="text-sm">
-                  {attr.trait_type}: {attr.value} [{attr.rarity}%]
-                </p>
-              ))}
-              <h3 className="text-lg font-bold mt-4">Information</h3>
-              <NFTDrawer nft={selectedNFT} />
-            </div>
-          </DrawerContent>
-        </Drawer>
-      )}
+      <NFTDrawerComponent
+        selectedNFT={selectedNFT}
+        isDrawerOpen={isDrawerOpen}
+        setIsDrawerOpen={setIsDrawerOpen}
+      />
       {showScrollToTop && (
         <ScrollToTopButton onClick={scrollToTop} />
       )}
