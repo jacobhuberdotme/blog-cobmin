@@ -5,12 +5,12 @@ import { NFT } from '../../types/nft';
 import dynamic from 'next/dynamic';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { ArrowUpIcon } from "@radix-ui/react-icons";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import NFTsComponent from '@/components/NFTsComponent';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
+import PropertiesFilter from '@/components/PropertiesFilter';
 
 const NFTDrawer = dynamic(() => import('../../components/NFTDrawer'), { ssr: false });
 
@@ -22,7 +22,8 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState('number-asc');
-  const [showScrollToTop, setShowScrollToTop] = useState(false); 
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [selectedProperties, setSelectedProperties] = useState<Record<string, string[]>>({});
 
   const observer = useRef<IntersectionObserver>();
   const searchParams = useSearchParams();
@@ -47,7 +48,8 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
 
   const fetchMoreNFTs = async () => {
     setLoading(true);
-    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 100) + 1}&sort=${sort}&query=${searchParams.get('query') || ''}`);
+    const params = new URLSearchParams(searchParams);
+    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 100) + 1}&sort=${sort}&${params.toString()}`);
     const data = await response.json();
     if (data.nfts.length === 0) {
       setHasMore(false);
@@ -55,6 +57,19 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
       setNfts(prevNfts => [...prevNfts, ...data.nfts]);
     }
     setLoading(false);
+  };
+
+  const updateURLAndFetch = (params: URLSearchParams) => {
+    replace(`${pathname}?${params.toString()}`);
+    fetch(`/api/nfts?${params.toString()}`)
+      .then((response) => response.json())
+      .then(({ nfts: updatedNfts }) => {
+        setNfts(updatedNfts);
+        setHasMore(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching updated NFT data:', error);
+      });
   };
 
   const handleSearch = useDebouncedCallback((term: string) => {
@@ -65,32 +80,42 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
       params.delete('query');
     }
     params.set('sort', sort);
-    replace(`${pathname}?${params.toString()}`);
-    fetch(`/api/nfts?query=${term}&sort=${sort}`)
-      .then((response) => response.json())
-      .then(({ nfts: filteredNfts }) => {
-        setNfts(filteredNfts);
-        setHasMore(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching filtered NFT data:', error);
+    Object.keys(selectedProperties).forEach(traitType => {
+      selectedProperties[traitType].forEach(property => {
+        params.append(`filter_${traitType}`, property);
       });
+    });
+    updateURLAndFetch(params);
   }, 300);
 
   const handleSortChange = (value: string) => {
     setSort(value);
     const params = new URLSearchParams(searchParams);
     params.set('sort', value);
-    replace(`${pathname}?${params.toString()}`);
-    fetch(`/api/nfts?sort=${value}&query=${searchParams.get('query') || ''}`)
-      .then((response) => response.json())
-      .then(({ nfts: sortedNfts }) => {
-        setNfts(sortedNfts);
-        setHasMore(true);
-      })
-      .catch((error) => {
-        console.error('Error fetching sorted NFT data:', error);
+    if (searchParams.get('query')) {
+      params.set('query', searchParams.get('query')!);
+    }
+    Object.keys(selectedProperties).forEach(traitType => {
+      selectedProperties[traitType].forEach(property => {
+        params.append(`filter_${traitType}`, property);
       });
+    });
+    updateURLAndFetch(params);
+  };
+
+  const handlePropertiesFilterChange = (updatedProperties: Record<string, string[]>) => {
+    setSelectedProperties(updatedProperties);
+    const params = new URLSearchParams();
+    Object.keys(updatedProperties).forEach(traitType => {
+      updatedProperties[traitType].forEach(value => {
+        params.append(`filter_${traitType}`, value);
+      });
+    });
+    params.set('sort', sort);
+    if (searchParams.get('query')) {
+      params.set('query', searchParams.get('query')!);
+    }
+    updateURLAndFetch(params);
   };
 
   const scrollToTop = () => {
@@ -134,14 +159,17 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
           </>
         )}
         {tokenInfo && (
-          <NFTsComponent 
-            nfts={nfts} 
-            openDrawer={openDrawer} 
-            handleSearch={handleSearch} 
-            handleSortChange={handleSortChange} 
-            sort={sort}
-            lastElementRef={lastElementRef}
-          />
+          <>
+            <PropertiesFilter nfts={nfts} selectedProperties={selectedProperties} onChange={handlePropertiesFilterChange} />
+            <NFTsComponent 
+              nfts={nfts} 
+              openDrawer={openDrawer} 
+              handleSearch={handleSearch} 
+              handleSortChange={handleSortChange} 
+              sort={sort}
+              lastElementRef={lastElementRef}
+            />
+          </>
         )}
       </div>
       {!tokenInfo && (

@@ -35,6 +35,25 @@ const generateImageUrl = (nft: NFT) => {
   return `https://qk5zmcowye2gfiufzx5l232ltb7ikz64wjpwc2d3uiwzthhjfpsa.arweave.net/gruWCdbBNGKihc36vW9LmH6FZ9yyX2Foe6ItmZzpK-Q/${nft.edition}.gif`;
 };
 
+const calculateTraitCounts = (nfts: NFT[]) => {
+  const traitCounts: Record<string, { count: number, values: Record<string, { count: number, rarity: string }> }> = {};
+
+  nfts.forEach(nft => {
+    nft.attributeRarities.forEach(attr => {
+      if (!traitCounts[attr.trait_type]) {
+        traitCounts[attr.trait_type] = { count: 0, values: {} };
+      }
+      traitCounts[attr.trait_type].count++;
+      if (!traitCounts[attr.trait_type].values[attr.value]) {
+        traitCounts[attr.trait_type].values[attr.value] = { count: 0, rarity: attr.rarity };
+      }
+      traitCounts[attr.trait_type].values[attr.value].count++;
+    });
+  });
+
+  return traitCounts;
+};
+
 export const preloadNfts = () => {
   void getNfts();
 };
@@ -43,12 +62,20 @@ export const preloadTokenInfo = () => {
   void getTokenInfo();
 };
 
-export async function ServerNFTs(page: number = 1, query?: string, sort?: string) {
+export async function ServerNFTs(page: number = 1, query?: string, sort?: string, filters?: Record<string, string[]>) {
   const nfts = await getNfts();
   let filteredNfts = nfts;
 
   if (query) {
-    filteredNfts = nfts.filter(nft => nft.edition.toString().includes(query));
+    filteredNfts = filteredNfts.filter(nft => nft.edition.toString().includes(query));
+  }
+
+  if (filters) {
+    filteredNfts = filteredNfts.filter(nft => 
+      Object.keys(filters).every(traitType => 
+        filters[traitType].includes(nft.attributeRarities.find(attr => attr.trait_type === traitType)?.value || "")
+      )
+    );
   }
 
   switch (sort) {
@@ -68,12 +95,14 @@ export async function ServerNFTs(page: number = 1, query?: string, sort?: string
       filteredNfts = filteredNfts.sort((a, b) => a.edition - b.edition);
   }
 
+  const traitCounts = calculateTraitCounts(nfts);
+
   const paginatedNfts = filteredNfts.slice((page - 1) * 100, page * 100).map(nft => ({
     ...nft,
     imageUrl: generateImageUrl(nft),
   }));
   const tokenInfo = await getTokenInfo();
-  return { nfts: paginatedNfts, tokenInfo, totalResults: filteredNfts.length };
+  return { nfts: paginatedNfts, tokenInfo, totalResults: filteredNfts.length, traitCounts };
 }
 
 export async function getHolder(tokenId: number) {
