@@ -12,7 +12,13 @@ const fontSans = FontSans({
   variable: '--font-sans',
 });
 
-export const metadata: Metadata = siteMetadata;
+export const metadata: Metadata = {
+  ...siteMetadata,
+  title: {
+    default: "Cobmin's Blog",
+    template: '%s | Cobmin',
+  },
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
