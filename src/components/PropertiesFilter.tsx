@@ -9,21 +9,18 @@ interface PropertiesFilterProps {
   nfts: NFT[];
   selectedProperties: Record<string, string[]>;
   onChange: (selectedProperties: Record<string, string[]>) => void;
+  traitCounts: Record<string, { count: number; values: Record<string, { count: number; rarity: string }> }>;
 }
 
-const PropertiesFilter: React.FC<PropertiesFilterProps> = ({ nfts, selectedProperties, onChange }) => {
-  const traitTypes = Array.from(new Set(nfts.flatMap(nft => nft.attributeRarities.map(attr => attr.trait_type)))).map(trait_type => {
-    const valuesWithCounts = nfts.flatMap(nft => nft.attributeRarities.filter(attr => attr.trait_type === trait_type).map(attr => attr.value));
-    const uniqueValuesWithCounts = Array.from(new Set(valuesWithCounts)).map(value => ({
+const PropertiesFilter: React.FC<PropertiesFilterProps> = ({ nfts, selectedProperties, onChange, traitCounts }) => {
+  const traitTypes = Object.keys(traitCounts).map(trait_type => ({
+    trait_type,
+    values: Object.keys(traitCounts[trait_type].values).map(value => ({
       value,
-      count: valuesWithCounts.filter(v => v === value).length
-    }));
-    return {
-      trait_type,
-      values: uniqueValuesWithCounts,
-      count: uniqueValuesWithCounts.length
-    };
-  });
+      count: traitCounts[trait_type].values[value].count,
+      rarity: traitCounts[trait_type].values[value].rarity,
+    })).sort((a, b) => a.value.localeCompare(b.value)),
+  })).sort((a, b) => a.trait_type.localeCompare(b.trait_type));
 
   const handleCheckboxChange = (traitType: string, value: string) => {
     const updated = { ...selectedProperties };
@@ -53,10 +50,10 @@ const PropertiesFilter: React.FC<PropertiesFilterProps> = ({ nfts, selectedPrope
         </CollapsibleTrigger>
       </div>
       <CollapsibleContent className="space-y-4 px-4 py-2">
-        {traitTypes.map(({ trait_type, values, count }) => (
+        {traitTypes.map(({ trait_type, values }) => (
           <Collapsible key={trait_type} className="mb-2">
             <div className="flex items-center justify-between space-x-4">
-              <h4 className="text-sm font-semibold">{trait_type} [{count}]</h4>
+              <h4 className="text-sm font-semibold">{trait_type} [{values.length}]</h4>
               <CollapsibleTrigger asChild>
                 <Button variant="ghost" size="sm">
                   <CaretSortIcon className="h-4 w-4" />
@@ -65,13 +62,13 @@ const PropertiesFilter: React.FC<PropertiesFilterProps> = ({ nfts, selectedPrope
               </CollapsibleTrigger>
             </div>
             <CollapsibleContent className="space-y-2">
-              {values.map(({ value, count }) => (
+              {values.map(({ value, count, rarity }) => (
                 <div key={value} className="flex items-center space-x-2">
                   <Checkbox
                     checked={selectedProperties[trait_type]?.includes(value) || false}
                     onCheckedChange={() => handleCheckboxChange(trait_type, value)}
                   />
-                  <span>{value} [{count}]</span>
+                  <span>{value} [{count}] ({rarity}%)</span>
                 </div>
               ))}
             </CollapsibleContent>

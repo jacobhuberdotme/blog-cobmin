@@ -12,7 +12,7 @@ import TokenInfo from '@/components/TokenInfo';
 import Banner from '@/components/Banner';
 import NFTDrawerComponent from '@/components/NFTDrawerComponent';
 
-const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], initialTokenInfo: any }) => {
+const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number, values: Record<string, { count: number, rarity: string }> }> }) => {
   const [nfts, setNfts] = useState<NFT[]>(initialNfts);
   const [loading, setLoading] = useState(false);
   const [tokenInfo, setTokenInfo] = useState<any>(initialTokenInfo);
@@ -47,7 +47,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
   const fetchMoreNFTs = async () => {
     setLoading(true);
     const params = new URLSearchParams(searchParams);
-    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 100) + 1}&sort=${sort}&${params.toString()}`);
+    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 200) + 1}&sort=${sort}&${params.toString()}`);
     const data = await response.json();
     if (data.nfts.length === 0) {
       setHasMore(false);
@@ -142,7 +142,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
         {tokenInfo && <TokenInfo tokenInfo={tokenInfo} />}
         {tokenInfo && (
           <>
-            <PropertiesFilter nfts={nfts} selectedProperties={selectedProperties} onChange={handlePropertiesFilterChange} />
+            <PropertiesFilter nfts={nfts} selectedProperties={selectedProperties} onChange={handlePropertiesFilterChange} traitCounts={traitCounts} />
             <NFTsComponent 
               nfts={nfts} 
               openDrawer={openDrawer} 

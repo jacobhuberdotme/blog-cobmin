@@ -47,10 +47,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NFTsPage() {
-  const { nfts, tokenInfo } = await ServerNFTs();
+  const { nfts, tokenInfo, traitCounts } = await ServerNFTs();
   return (
     <Suspense fallback={<Loading />}>
-      <ClientNFTs initialNfts={nfts} initialTokenInfo={tokenInfo} />
+      <ClientNFTs initialNfts={nfts} initialTokenInfo={tokenInfo} traitCounts={traitCounts} />
     </Suspense>
   );
 }

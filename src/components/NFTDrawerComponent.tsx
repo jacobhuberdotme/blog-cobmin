@@ -20,7 +20,7 @@ const NFTDrawerComponent = ({ selectedNFT, isDrawerOpen, setIsDrawerOpen }: { se
                 <h4 className="text-lg font-semibold">Properties</h4>
                 {selectedNFT.attributeRarities.map((attr, index) => (
                   <p key={index} className="text-sm">
-                    {attr.trait_type}: {attr.value} [{attr.rarity}%]
+                    {attr.trait_type}: {attr.value} ({attr.rarity}%)
                   </p>
                 ))}
               </div>
