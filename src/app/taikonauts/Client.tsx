@@ -1,66 +1,17 @@
-'use client';
+"use client"
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { NFT } from '../../types/nft';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/nft-card';
-import { Drawer, DrawerContent } from '../../components/ui/drawer';
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
 import dynamic from 'next/dynamic';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { ArrowUpIcon } from "@radix-ui/react-icons";  // Import an icon for the scroll-to-top button
+import { ArrowUpIcon } from "@radix-ui/react-icons";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import NFTsComponent from '@/components/NFTsComponent';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 
 const NFTDrawer = dynamic(() => import('../../components/NFTDrawer'), { ssr: false });
-
-const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort, lastElementRef }: 
-  { nfts: NFT[], openDrawer: (nft: NFT) => void, handleSearch: (term: string) => void, handleSortChange: (value: string) => void, sort: string, lastElementRef: (node: HTMLElement | null) => void }) => (
-  <div className="container mx-auto p-4">
-    <div className="flex justify-between items-center mb-4">
-      <Input
-        type="number"
-        placeholder="Search by Edition"
-        onChange={(e) => handleSearch(e.target.value)}
-        className="w-1/4 mr-4"  // Made the input smaller
-      />
-      <Select onValueChange={handleSortChange} value={sort}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Sort by" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="number-asc">Number Ascending</SelectItem>
-          <SelectItem value="number-desc">Number Descending</SelectItem>
-          <SelectItem value="rarity-asc">Rarity Ascending</SelectItem>
-          <SelectItem value="rarity-desc">Rarity Descending</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-      {nfts.map((nft) => (
-        <div key={nft.edition} className="relative">
-          <Card onClick={() => openDrawer(nft)}>
-            <CardContent>
-              <div className="relative w-full pb-[100%]"> {/* Maintain aspect ratio */}
-                <img
-                  src={nft.imageUrl}
-                  alt={`NFT ${nft.edition}`}
-                  className="absolute top-0 left-0 w-full h-full object-cover rounded-lg"
-                />
-              </div>
-            </CardContent>
-            <CardHeader>
-              <CardTitle>#{nft.edition}</CardTitle>
-              <CardDescription>Rarity: {nft.rarity}</CardDescription>
-            </CardHeader>
-          </Card>
-        </div>
-      ))}
-    </div>
-    <div ref={lastElementRef} /> {/* Ensure this is inside NFTsComponent */}
-  </div>
-);
 
 const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], initialTokenInfo: any }) => {
   const [nfts, setNfts] = useState<NFT[]>(initialNfts);
@@ -70,7 +21,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [sort, setSort] = useState('number-asc');
-  const [showScrollToTop, setShowScrollToTop] = useState(false); // State for showing scroll-to-top button
+  const [showScrollToTop, setShowScrollToTop] = useState(false); 
 
   const observer = useRef<IntersectionObserver>();
   const searchParams = useSearchParams();
@@ -112,13 +63,13 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
     } else {
       params.delete('query');
     }
-    params.set('sort', sort); // Ensure sort parameter is included
+    params.set('sort', sort);
     replace(`${pathname}?${params.toString()}`);
     fetch(`/api/nfts?query=${term}&sort=${sort}`)
       .then((response) => response.json())
       .then(({ nfts: filteredNfts }) => {
         setNfts(filteredNfts);
-        setHasMore(false); // No need to load more if a search is active
+        setHasMore(false);
       })
       .catch((error) => {
         console.error('Error fetching filtered NFT data:', error);
@@ -134,14 +85,13 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
       .then((response) => response.json())
       .then(({ nfts: sortedNfts }) => {
         setNfts(sortedNfts);
-        setHasMore(true); // Reset hasMore to allow infinite scroll with new sort
+        setHasMore(true);
       })
       .catch((error) => {
         console.error('Error fetching sorted NFT data:', error);
       });
   };
 
-  // Scroll-to-top button functionality
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -236,7 +186,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo }: { initialNfts: NFT[], ini
       {showScrollToTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-4 right-4 bg-gray-600 text-white p-2 rounded-full shadow-lg hover:bg-gray-700"
+          className="fixed bottom-4 right-4 bg-blue-600 text-white p-2 rounded-full shadow-lg hover:bg-blue-700"
         >
           <ArrowUpIcon className="h-6 w-6" />
         </button>
