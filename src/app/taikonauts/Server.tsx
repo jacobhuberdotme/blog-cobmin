@@ -62,6 +62,14 @@ export const preloadTokenInfo = () => {
   void getTokenInfo();
 };
 
+export async function getNFTData(edition: number) {
+  const response = await fetch(`https://ww3du5ng2zgic6carv7dw3itjgagadeatq6fl3xjwplj4emuxc5a.arweave.net/tbY6dabWTIF4QI1-O20TSYBgDICcPFXu6bPWnhGUuLo/${edition}.json`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch NFT data');
+  }
+  return response.json();
+}
+
 export async function ServerNFTs(page: number = 1, query?: string, sort?: string, filters?: Record<string, string[]>) {
   const nfts = await getNfts();
   let filteredNfts = nfts;

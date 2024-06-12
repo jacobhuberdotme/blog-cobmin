@@ -12,10 +12,12 @@ import TokenInfo from '@/components/TokenInfo';
 import Banner from '@/components/Banner';
 import NFTDrawerComponent from '@/components/NFTDrawerComponent';
 
-const fetchNFTData = async (edition: number) => {
-  const response = await fetch(`https://ww3du5ng2zgic6carv7dw3itjgagadeatq6fl3xjwplj4emuxc5a.arweave.net/tbY6dabWTIF4QI1-O20TSYBgDICcPFXu6bPWnhGUuLo/${edition}.json`);
-  const data = await response.json();
-  return data;
+const fetchNFTDataFromServer = async (edition: number) => {
+  const response = await fetch(`/api/getNFTData?edition=${edition}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch NFT data');
+  }
+  return response.json();
 };
 
 const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number; values: Record<string, { count: number, rarity: string }> }> }) => {
@@ -29,7 +31,6 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [selectedProperties, setSelectedProperties] = useState<Record<string, string[]>>({});
   const [query, setQuery] = useState<string | null>(null);
-
   const observer = useRef<IntersectionObserver>();
   const searchParams = useSearchParams();
   const { replace, push } = useRouter();
@@ -37,7 +38,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
 
   const openDrawer = async (nft: NFT) => {
     setIsDrawerOpen(true);
-    const data = await fetchNFTData(nft.edition);
+    const data = await fetchNFTDataFromServer(nft.edition);
     setSelectedNFT({ ...nft, name: data.name, description: data.description });
   };
 
