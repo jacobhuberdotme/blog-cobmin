@@ -144,7 +144,7 @@ export async function ServerNFTs(page: number = 1, query?: string, sort?: string
 
   const traitCounts = calculateTraitCounts(nfts);
 
-  const paginatedNfts = filteredNfts.slice((page - 1) * 100, page * 100).map(nft => ({
+  const paginatedNfts = filteredNfts.slice((page - 1) * 50, page * 50).map(nft => ({
     ...nft,
     imageUrl: generateImageUrl(nft),
   }));

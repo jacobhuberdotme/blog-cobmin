@@ -11,6 +11,7 @@ import PropertiesFilter from '@/components/PropertiesFilter';
 import TokenInfo from '@/components/TokenInfo';
 import Banner from '@/components/Banner';
 import NFTDrawerComponent from '@/components/NFTDrawer';
+import Tag from '@/components/Tag';
 
 // Fetch NFT data from server
 const fetchNFTDataFromServer = async (edition: number) => {
@@ -77,7 +78,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     });
     params.set('sort', sort);
     try {
-      const response = await fetch(`/api/serverNfts?page=${Math.ceil(nfts.length / 100) + 1}&${params.toString()}`);
+      const response = await fetch(`/api/serverNfts?page=${Math.ceil(nfts.length / 50) + 1}&${params.toString()}`);
       const data = await response.json();
       if (data.nfts.length === 0) {
         setHasMore(false);
@@ -97,7 +98,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       .then((response) => response.json())
       .then(({ nfts: updatedNfts }) => {
         setNfts(updatedNfts);
-        setHasMore(updatedNfts.length === 100);
+        setHasMore(updatedNfts.length === 50);
       })
       .catch((error) => {
         console.error('Error fetching updated NFT data:', error);
@@ -154,6 +155,29 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     updateURLAndFetch(params);
   };
 
+  // Remove selected property filter
+  const removePropertyFilter = (traitType: string, value: string) => {
+    const updatedProperties = { ...selectedProperties };
+    if (updatedProperties[traitType]) {
+      updatedProperties[traitType] = updatedProperties[traitType].filter(v => v !== value);
+      if (updatedProperties[traitType].length === 0) {
+        delete updatedProperties[traitType];
+      }
+      setSelectedProperties(updatedProperties);
+      const params = new URLSearchParams();
+      Object.keys(updatedProperties).forEach(traitType => {
+        updatedProperties[traitType].forEach(property => {
+          params.append(`filter_${traitType}`, property);
+        });
+      });
+      params.set('sort', sort);
+      if (query) {
+        params.set('query', query);
+      }
+      updateURLAndFetch(params);
+    }
+  };
+
   // Scroll to top button
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -182,6 +206,17 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
         {tokenInfo && (
           <>
             <PropertiesFilter nfts={nfts} selectedProperties={selectedProperties} onChange={handlePropertiesFilterChange} traitCounts={traitCounts} />
+            <div className="mb-4">
+              {Object.entries(selectedProperties).map(([traitType, values]) =>
+                values.map((value, index) => (
+                  <Tag
+                    key={`${traitType}-${value}-${index}`}
+                    label={`${traitType}: ${value}`}
+                    onRemove={() => removePropertyFilter(traitType, value)}
+                  />
+                ))
+              )}
+            </div>
             <NFTsComponent 
               nfts={nfts} 
               openDrawer={openDrawer} 

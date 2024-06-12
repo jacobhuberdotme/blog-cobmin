@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { NFT } from '@/types/nft';
 import { Skeleton } from '@/components/ui/skeleton';
