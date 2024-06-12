@@ -1,9 +1,10 @@
 import { Suspense } from 'react';
-import { ServerNFTs, preloadNfts, preloadTokenInfo } from './Server';
+import { ServerNFTs, preloadNfts, preloadTokenInfo } from './serverUtils';
 import ClientNFTs from './Client';
 import Loading from './loading';
 import type { Metadata } from 'next';
 
+// Preload NFTs and Token Info
 preloadNfts();
 preloadTokenInfo();
 
@@ -47,10 +48,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function NFTsPage() {
-  const { nfts, tokenInfo, traitCounts } = await ServerNFTs();
-  return (
-    <Suspense fallback={<Loading />}>
-      <ClientNFTs initialNfts={nfts} initialTokenInfo={tokenInfo} traitCounts={traitCounts} />
-    </Suspense>
-  );
+  try {
+    const { nfts, tokenInfo, traitCounts } = await ServerNFTs();
+    return (
+      <Suspense fallback={<Loading />}>
+        <ClientNFTs initialNfts={nfts} initialTokenInfo={tokenInfo} traitCounts={traitCounts} />
+      </Suspense>
+    );
+  } catch (error) {
+    console.error('Failed to load NFTs:', error);
+    return <div>Error loading NFTs. Please try again later.</div>;
+  }
 }

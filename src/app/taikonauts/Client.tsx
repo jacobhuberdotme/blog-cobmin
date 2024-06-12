@@ -10,9 +10,11 @@ import ScrollToTopButton from '@/components/ScrollToTopButton';
 import PropertiesFilter from '@/components/PropertiesFilter';
 import TokenInfo from '@/components/TokenInfo';
 import Banner from '@/components/Banner';
-import NFTDrawerComponent from '@/components/NFTDrawerComponent';
+import NFTDrawerComponent from '@/components/NFTDrawer';
 
+// Fetch NFT data from server
 const fetchNFTDataFromServer = async (edition: number) => {
+  console.log('Fetching NFT data for edition:', edition); // Debug log
   const response = await fetch(`/api/getNFTData?edition=${edition}`);
   if (!response.ok) {
     throw new Error('Failed to fetch NFT data');
@@ -36,12 +38,20 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
   const { replace, push } = useRouter();
   const pathname = usePathname();
 
+  // Open NFT drawer and fetch additional data
   const openDrawer = async (nft: NFT) => {
+    console.log('Opening drawer for NFT:', nft); // Debug log
     setIsDrawerOpen(true);
-    const data = await fetchNFTDataFromServer(nft.edition);
-    setSelectedNFT({ ...nft, name: data.name, description: data.description });
+    try {
+      const data = await fetchNFTDataFromServer(nft.edition);
+      console.log('Fetched NFT data:', data); // Debug log
+      setSelectedNFT({ ...nft, name: data.name, description: data.description });
+    } catch (error) {
+      console.error('Failed to fetch NFT data:', error);
+    }
   };
 
+  // Observer to handle infinite scroll
   const lastElementRef = useCallback((node: HTMLElement | null) => {
     if (loading) return;
     if (observer.current) observer.current.disconnect();
@@ -53,6 +63,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     if (node) observer.current.observe(node);
   }, [loading, hasMore, query, selectedProperties, sort]);
 
+  // Fetch more NFTs for infinite scroll
   const fetchMoreNFTs = async () => {
     setLoading(true);
     const params = new URLSearchParams();
@@ -65,19 +76,24 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       });
     });
     params.set('sort', sort);
-    const response = await fetch(`/api/nfts?page=${Math.ceil(nfts.length / 100) + 1}&${params.toString()}`);
-    const data = await response.json();
-    if (data.nfts.length === 0) {
-      setHasMore(false);
-    } else {
-      setNfts(prevNfts => [...prevNfts, ...data.nfts]);
+    try {
+      const response = await fetch(`/api/serverNfts?page=${Math.ceil(nfts.length / 100) + 1}&${params.toString()}`);
+      const data = await response.json();
+      if (data.nfts.length === 0) {
+        setHasMore(false);
+      } else {
+        setNfts(prevNfts => [...prevNfts, ...data.nfts]);
+      }
+    } catch (error) {
+      console.error('Failed to fetch more NFTs:', error);
     }
     setLoading(false);
   };
 
+  // Update URL and fetch new data based on search parameters
   const updateURLAndFetch = (params: URLSearchParams) => {
     replace(`${pathname}?${params.toString()}`, { scroll: false });
-    fetch(`/api/nfts?${params.toString()}`)
+    fetch(`/api/serverNfts?${params.toString()}`)
       .then((response) => response.json())
       .then(({ nfts: updatedNfts }) => {
         setNfts(updatedNfts);
@@ -88,6 +104,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
       });
   };
 
+  // Handle search input with debounce
   const handleSearch = useDebouncedCallback((term: string) => {
     setQuery(term);
     const params = new URLSearchParams();
@@ -105,6 +122,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     updateURLAndFetch(params);
   }, 300);
 
+  // Handle sort change
   const handleSortChange = (value: string) => {
     setSort(value);
     const params = new URLSearchParams();
@@ -120,6 +138,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     updateURLAndFetch(params);
   };
 
+  // Handle properties filter change
   const handlePropertiesFilterChange = (updatedProperties: Record<string, string[]>) => {
     setSelectedProperties(updatedProperties);
     const params = new URLSearchParams();
@@ -135,6 +154,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     updateURLAndFetch(params);
   };
 
+  // Scroll to top button
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

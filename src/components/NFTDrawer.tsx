@@ -1,10 +1,13 @@
-// components/NFTDrawer.tsx
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { NFT } from '@/types/nft';
 import { Skeleton } from '@/components/ui/skeleton';
 
-interface NFTDrawerProps {
-  nft: NFT;
+interface NFTDrawerComponentProps {
+  selectedNFT: NFT | null;
+  isDrawerOpen: boolean;
+  setIsDrawerOpen: (isOpen: boolean) => void;
 }
 
 const calculateExpMap = () => {
@@ -20,13 +23,13 @@ const calculateExpMap = () => {
 
 const expMap = calculateExpMap();
 
-export const getLevel = (experience: number) => {
+const getLevel = (experience: number) => {
   let levels = Object.keys(expMap);
-  let level: undefined|string|number = levels.find(function(level) {
+  let level: undefined | string | number = levels.find(function (level) {
     return expMap[level] >= experience;
   });
   level = Number(level) - 1;
-  let percentage: number|string = 0;
+  let percentage: number | string = 0;
 
   if (level > 0) {
     const currentLevelExperience = expMap[level];
@@ -41,22 +44,23 @@ export const getLevel = (experience: number) => {
 
   return {
     level: level,
-    levelPercent: String(percentage)
+    levelPercent: String(percentage),
   };
 };
 
-const NFTDrawer: React.FC<NFTDrawerProps> = ({ nft }) => {
+const NFTDrawerComponent: React.FC<NFTDrawerComponentProps> = ({ selectedNFT, isDrawerOpen, setIsDrawerOpen }) => {
   const [holder, setHolder] = useState<string | null>(null);
   const [loadingHolder, setLoadingHolder] = useState(true);
   const [levelInfo, setLevelInfo] = useState<{ level: number, levelPercent: string } | null>(null);
   const [loadingLevel, setLoadingLevel] = useState(true);
 
   useEffect(() => {
-    if (!nft) return;
+    if (!selectedNFT) return;
 
     const fetchHolder = async () => {
       try {
-        const response = await fetch(`/api/holders?tokenId=${nft.edition}`);
+        console.log('Fetching holder for edition:', selectedNFT.edition);
+        const response = await fetch(`/api/getHolder?tokenId=${selectedNFT.edition}`);
         const data = await response.json();
         if (data.holder) {
           setHolder(data.holder);
@@ -72,8 +76,10 @@ const NFTDrawer: React.FC<NFTDrawerProps> = ({ nft }) => {
 
     const fetchLevel = async () => {
       try {
-        const response = await fetch(`/api/xp?edition=${nft.edition}`);
+        console.log('Fetching XP for edition:', selectedNFT.edition);
+        const response = await fetch(`/api/getXp?edition=${selectedNFT.edition}`);
         const data = await response.json();
+        console.log('Fetched XP data:', data);
         const levelData = getLevel(data.xp);
         setLevelInfo(levelData);
       } catch (error) {
@@ -85,30 +91,58 @@ const NFTDrawer: React.FC<NFTDrawerProps> = ({ nft }) => {
 
     fetchHolder();
     fetchLevel();
-  }, [nft]);
+  }, [selectedNFT]);
 
   return (
-    <div>
-      {loadingHolder ? (
-        <Skeleton className="h-6 w-full mb-2" />
-      ) : (
-        holder && (
-          <p className="text-sm">
-            Holder: {holder}
-          </p>
-        )
+    <>
+      {selectedNFT && (
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          <DrawerContent>
+            <div className="px-4 py-2">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold">{selectedNFT.name}</h3>
+                <p className="text-md">Rarity: {selectedNFT.rarity}</p>
+              </div>
+              <p className="text-sm text-gray-600">{selectedNFT.description}</p>
+              <div className="flex flex-col">
+                <div>
+                  <h4 className="text-lg font-semibold">Properties</h4>
+                  {selectedNFT.attributeRarities.map((attr, index) => (
+                    <p key={index} className="text-sm">
+                      {attr.trait_type}: {attr.value} ({attr.rarity}%)
+                    </p>
+                  ))}
+                </div>
+                <div>
+                  <h4 className="text-lg font-semibold">Information</h4>
+                  <div>
+                    {loadingHolder ? (
+                      <Skeleton className="h-6 w-full mb-2" />
+                    ) : (
+                      holder && (
+                        <p className="text-sm">
+                          Holder: {holder}
+                        </p>
+                      )
+                    )}
+                    {loadingLevel ? (
+                      <Skeleton className="h-6 w-full mb-2" />
+                    ) : (
+                      levelInfo && (
+                        <p className="text-sm">
+                          LooperLands Level: {levelInfo.level} ({levelInfo.levelPercent}%)
+                        </p>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
       )}
-      {loadingLevel ? (
-        <Skeleton className="h-6 w-full mb-2" />
-      ) : (
-        levelInfo && (
-          <p className="text-sm">
-            LooperLands Level: {levelInfo.level} ({levelInfo.levelPercent}%)
-          </p>
-        )
-      )}
-    </div>
+    </>
   );
 };
 
-export default NFTDrawer;
+export default NFTDrawerComponent;

@@ -14,6 +14,38 @@ const headers = {
   'x-api-key': API_KEY as string,
 };
 
+// Fetch XP for a specific edition with retry mechanism
+export async function getXP(edition: number, retries: number = 3): Promise<number> {
+  const fetchXP = async () => {
+    const response = await fetch(`https://api.looperlands.io/api/game/asset/xp/0x56b0D8d04de22f2539945258ddb288c123026775_${edition}`, {
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch XP data: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.xp;
+  };
+
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      return await fetchXP();
+    } catch (error) {
+      if (attempt < retries - 1) {
+        console.warn(`Retrying fetch XP for edition ${edition}: Attempt ${attempt + 1}`);
+      } else {
+        console.error(`Failed to fetch XP for edition ${edition} after ${retries} attempts`, error);
+        throw error;
+      }
+    }
+  }
+
+  throw new Error('Max retries reached');
+}
+
+// Cache and fetch NFTs data
 const getNfts = cache(async (): Promise<NFT[]> => {
   const filePath = join(process.cwd(), 'public', 'data', 'taikonautsrarity.json');
   const fileContents = await fs.readFile(filePath, 'utf8');
@@ -21,6 +53,7 @@ const getNfts = cache(async (): Promise<NFT[]> => {
   return data;
 });
 
+// Cache and fetch token info
 const getTokenInfo = cache(async () => {
   const response = await fetch('https://api.w3w.ai/taiko/v1/explorer/token/0x56b0d8d04de22f2539945258ddb288c123026775/profile', {
     headers: headers,
@@ -31,10 +64,12 @@ const getTokenInfo = cache(async () => {
   return response.json();
 });
 
+// Generate image URL for NFT
 const generateImageUrl = (nft: NFT) => {
   return `https://qk5zmcowye2gfiufzx5l232ltb7ikz64wjpwc2d3uiwzthhjfpsa.arweave.net/gruWCdbBNGKihc36vW9LmH6FZ9yyX2Foe6ItmZzpK-Q/${nft.edition}.gif`;
 };
 
+// Calculate trait counts for NFTs
 const calculateTraitCounts = (nfts: NFT[]) => {
   const traitCounts: Record<string, { count: number, values: Record<string, { count: number, rarity: string }> }> = {};
 
@@ -54,14 +89,17 @@ const calculateTraitCounts = (nfts: NFT[]) => {
   return traitCounts;
 };
 
+// Preload NFTs data
 export const preloadNfts = () => {
   void getNfts();
 };
 
+// Preload token info
 export const preloadTokenInfo = () => {
   void getTokenInfo();
 };
 
+// Fetch specific NFT data by edition
 export async function getNFTData(edition: number) {
   const response = await fetch(`https://ww3du5ng2zgic6carv7dw3itjgagadeatq6fl3xjwplj4emuxc5a.arweave.net/tbY6dabWTIF4QI1-O20TSYBgDICcPFXu6bPWnhGUuLo/${edition}.json`);
   if (!response.ok) {
@@ -70,6 +108,7 @@ export async function getNFTData(edition: number) {
   return response.json();
 }
 
+// Fetch and filter NFTs data
 export async function ServerNFTs(page: number = 1, query?: string, sort?: string, filters?: Record<string, string[]>) {
   const nfts = await getNfts();
   let filteredNfts = nfts;
@@ -113,6 +152,7 @@ export async function ServerNFTs(page: number = 1, query?: string, sort?: string
   return { nfts: paginatedNfts, tokenInfo, totalResults: filteredNfts.length, traitCounts };
 }
 
+// Fetch holder information for a specific token ID
 export async function getHolder(tokenId: number) {
   const response = await fetch(`https://api.routescan.io/v2/network/mainnet/evm/167000/erc721-transfers?tokenAddress=0x56b0d8d04de22f2539945258ddb288c123026775&tokenId=${tokenId}&limit=1`, {
     headers: headers,
@@ -125,14 +165,7 @@ export async function getHolder(tokenId: number) {
   }
 }
 
-export async function getXP(edition: number) {
-  const response = await fetch(`https://api.looperlands.io/api/game/asset/xp/0x56b0D8d04de22f2539945258ddb288c123026775_${edition}`, {
-    headers: headers,
-  });
-  const data = await response.json();
-  return data.xp;
-}
-
+// Calculate experience map
 const calculateExpMap = () => {
   const experienceMap: any = {};
   experienceMap[1] = 0;
@@ -146,6 +179,7 @@ const calculateExpMap = () => {
 
 const expMap = calculateExpMap();
 
+// Get level based on experience
 export const getLevel = (experience: number) => {
   let levels = Object.keys(expMap);
   let level: undefined | string | number = levels.find(function (level) {
