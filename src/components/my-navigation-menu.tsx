@@ -29,9 +29,9 @@ export default function MyNavigationMenu() {
       </div>
       <NavigationMenuList className="flex items-center space-x-2">
       <NavigationMenuItem>
-          <Link href="/taikonauts" legacyBehavior passHref>
+          <Link href="/collections" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Taikonauts
+              Collections
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

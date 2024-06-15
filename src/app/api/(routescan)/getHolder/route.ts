@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getHolder } from '@/app/taikonauts/serverUtils';
+import { getHolder } from '@/app/collections/[collectionName]/serverUtils';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

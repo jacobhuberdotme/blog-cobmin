@@ -1,0 +1,93 @@
+[
+    {
+      "edition": 1331,
+      "rarity": 1,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 1739,
+      "rarity": 2,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 2922,
+      "rarity": 3,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 3342,
+      "rarity": 4,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 4703,
+      "rarity": 5,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 5859,
+      "rarity": 6,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 6006,
+      "rarity": 7,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 7708,
+      "rarity": 8,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 8646,
+      "rarity": 9,
+      "totalRarity": "0.00",
+      "attributeRarities": []
+    },
+    {
+      "edition": 6949,
+      "rarity": 10,
+      "totalRarity": "9.81",
+      "attributeRarities": [
+        {
+          "trait_type": "Background",
+          "value": "Desert",
+          "rarity": "1.92"
+        },
+        {
+          "trait_type": "Shorts",
+          "value": "Short Shorts Purple",
+          "rarity": "1.50"
+        },
+        {
+          "trait_type": "Kits",
+          "value": "Astro",
+          "rarity": "0.95"
+        },
+        {
+          "trait_type": "Drums",
+          "value": "McDicks Sad",
+          "rarity": "1.86"
+        },
+        {
+          "trait_type": "Right Hand",
+          "value": "Crystal Skull",
+          "rarity": "0.44"
+        },
+        {
+          "trait_type": "Left Hand",
+          "value": "Bow",
+          "rarity": "3.14"
+        }
+      ]
+    }
+  ]

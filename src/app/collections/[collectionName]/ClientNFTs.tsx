@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { NFT } from '../../types/nft';
+import { NFT } from '@/types/nft';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,16 +14,16 @@ import NFTDrawerComponent from '@/components/NFTDrawer';
 import Tag from '@/components/Tag';
 
 // Fetch NFT data from server
-const fetchNFTDataFromServer = async (edition: number) => {
+const fetchNFTDataFromServer = async (collectionName: string, edition: number) => {
   console.log('Fetching NFT data for edition:', edition); // Debug log
-  const response = await fetch(`/api/getNFTData?edition=${edition}`);
+  const response = await fetch(`/api/getNFTData?collectionName=${collectionName}&edition=${edition}`);
   if (!response.ok) {
     throw new Error('Failed to fetch NFT data');
   }
   return response.json();
 };
 
-const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number; values: Record<string, { count: number, rarity: string }> }> }) => {
+const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts, collectionName }: { initialNfts: NFT[], initialTokenInfo: any, traitCounts: Record<string, { count: number; values: Record<string, { count: number, rarity: string }> }>, collectionName: string }) => {
   const [nfts, setNfts] = useState<NFT[]>(initialNfts);
   const [loading, setLoading] = useState(false);
   const [tokenInfo, setTokenInfo] = useState<any>(initialTokenInfo);
@@ -44,7 +44,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     console.log('Opening drawer for NFT:', nft); // Debug log
     setIsDrawerOpen(true);
     try {
-      const data = await fetchNFTDataFromServer(nft.edition);
+      const data = await fetchNFTDataFromServer(collectionName, nft.edition);
       console.log('Fetched NFT data:', data); // Debug log
       setSelectedNFT({ ...nft, name: data.name, description: data.description });
     } catch (error) {
@@ -78,7 +78,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     });
     params.set('sort', sort);
     try {
-      const response = await fetch(`/api/serverNfts?page=${Math.ceil(nfts.length / 50) + 1}&${params.toString()}`);
+      const response = await fetch(`/api/serverNfts?collectionName=${collectionName}&page=${Math.ceil(nfts.length / 50) + 1}&${params.toString()}`);
       const data = await response.json();
       if (data.nfts.length === 0) {
         setHasMore(false);
@@ -94,7 +94,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
   // Update URL and fetch new data based on search parameters
   const updateURLAndFetch = (params: URLSearchParams) => {
     replace(`${pathname}?${params.toString()}`, { scroll: false });
-    fetch(`/api/serverNfts?${params.toString()}`)
+    fetch(`/api/serverNfts?collectionName=${collectionName}&${params.toString()}`)
       .then((response) => response.json())
       .then(({ nfts: updatedNfts }) => {
         setNfts(updatedNfts);
@@ -201,7 +201,7 @@ const ClientNFTs = ({ initialNfts, initialTokenInfo, traitCounts }: { initialNft
     <>
       <Banner />
       <div className="container mx-auto p-4 mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-4">Taikonauts</h1>
+        <h1 className="text-3xl font-bold mb-4">{collectionName}</h1>
         {tokenInfo && <TokenInfo tokenInfo={tokenInfo} />}
         {tokenInfo && (
           <>

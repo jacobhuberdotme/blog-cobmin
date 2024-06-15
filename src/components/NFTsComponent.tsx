@@ -4,8 +4,21 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/nft-card';
 import { NFT } from '@/types/nft';
 
-const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort, lastElementRef }: 
-  { nfts: NFT[], openDrawer: (nft: NFT) => void, handleSearch: (term: string) => void, handleSortChange: (value: string) => void, sort: string, lastElementRef: (node: HTMLElement | null) => void }) => (
+const NFTsComponent = ({
+  nfts,
+  openDrawer,
+  handleSearch,
+  handleSortChange,
+  sort,
+  lastElementRef
+}: {
+  nfts: NFT[],
+  openDrawer: (nft: NFT) => void,
+  handleSearch: (term: string) => void,
+  handleSortChange: (value: string) => void,
+  sort: string,
+  lastElementRef: (node: HTMLElement | null) => void
+}) => (
   <div className="container mx-auto p-4">
     <div className="flex justify-between items-center mb-4">
       <Input
@@ -29,7 +42,7 @@ const NFTsComponent = ({ nfts, openDrawer, handleSearch, handleSortChange, sort,
       </Select>
     </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-      {nfts.map((nft) => (
+      {(nfts || []).map((nft) => (
         <div key={nft.edition} className="relative card"> {/* Add "card" class here */}
           <Card onClick={() => openDrawer(nft)}>
             <CardContent>

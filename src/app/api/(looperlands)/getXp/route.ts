@@ -1,4 +1,4 @@
-import { getXP } from '@/app/taikonauts/serverUtils';
+import { getXP } from '@/app/collections/[collectionName]/serverUtils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

@@ -1,4 +1,4 @@
-import { getNFTData } from '@/app/taikonauts/serverUtils';
+import { getNFTData } from '@/app/collections/[collectionName]/serverUtils';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
