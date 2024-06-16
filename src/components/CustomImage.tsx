@@ -9,7 +9,6 @@ interface CustomImageProps {
 
 const CustomImage = ({ src, alt, width = '100%', height = 'auto' }: CustomImageProps) => {
   return (
-    <div className="w-full flex justify-center my-4">
       <Image
         src={src}
         alt={alt}
@@ -18,7 +17,6 @@ const CustomImage = ({ src, alt, width = '100%', height = 'auto' }: CustomImageP
         style={{ width: '100%', height: 'auto' }} // Apply style for responsive image
         className="rounded-lg"
       />
-    </div>
   );
 };
 
