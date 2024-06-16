@@ -1,5 +1,3 @@
-// src/components/BlogPosts.tsx
-
 'use client';
 
 import Link from 'next/link';
@@ -103,22 +101,22 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ posts }) => {
       )}
       <ul className="space-y-4">
         {filteredPosts.slice(1).map((post) => (
-          <li key={post.slug} className="flex">
+          <li key={post.slug} className="flex flex-col sm:flex-row">
             <Link href={`/blog/${post.slug}`} className="block w-full">
-              <Card className="h-full flex flex-row">
+              <Card className="h-full flex flex-col sm:flex-row">
                 {post.image && (
-                  <div className="relative w-1/3 h-full rounded-l-xl overflow-hidden">
+                  <div className="relative w-full sm:w-1/3 h-48 sm:h-full rounded-t-xl sm:rounded-l-xl overflow-hidden">
                     <Image
                       src={post.image}
                       alt={post.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover' }}
-                      className="rounded-l-xl"
+                      className="rounded-t-xl sm:rounded-l-xl"
                     />
                   </div>
                 )}
-                <div className="w-2/3 p-4 flex flex-col justify-between">
+                <div className="p-4 flex flex-col justify-between w-full sm:w-2/3">
                   <CardHeader className="p-2 flex-shrink-0">
                     <CardTitle className="text-xl">{post.title}</CardTitle>
                     <CardDescription>{new Date(post.date).toLocaleDateString()}</CardDescription>

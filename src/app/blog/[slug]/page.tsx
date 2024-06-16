@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { data: frontmatter } = matter(source);
 
   return {
-    metadataBase: new URL('https://yourwebsite.com'),  // Replace with your actual website URL
+    metadataBase: new URL('https://cobmin.com'),  // Replace with your actual website URL
     title: frontmatter.title,
     description: frontmatter.summary,
     openGraph: {
