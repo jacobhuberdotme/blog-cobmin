@@ -13,9 +13,9 @@ const CustomImage = ({ src, alt, width = '100%', height = 'auto' }: CustomImageP
       <Image
         src={src}
         alt={alt}
-        layout="responsive"
         width={typeof width === 'string' ? parseInt(width, 10) : width}
         height={typeof height === 'string' ? parseInt(height, 10) : height}
+        style={{ width: '100%', height: 'auto' }} // Apply style for responsive image
         className="rounded-lg"
       />
     </div>

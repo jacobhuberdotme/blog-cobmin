@@ -23,10 +23,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(
-        "min-h-screen bg-background font-sans antialiased flex flex-col",
-        fontSans.variable
-      )}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased flex flex-col',
+          fontSans.variable
+        )}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -35,9 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <MyNavigationMenu />
           <div className="flex-grow flex justify-center p-2">
-            <div className="w-full max-w-4xl">
-              {children} 
-            </div>
+            <div className="w-full max-w-4xl">{children}</div>
           </div>
           <MyFooter />
         </ThemeProvider>

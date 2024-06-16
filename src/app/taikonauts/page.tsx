@@ -9,6 +9,8 @@ preloadNfts();
 preloadTokenInfo();
 
 export async function generateMetadata(): Promise<Metadata> {
+
+  // Use fetched data to generate metadata dynamically
   return {
     title: 'Taikonauts NFT Collection',
     description: 'Marching to the beat of the 🥁 & exploring the unknown | First NFT collection on Taiko',

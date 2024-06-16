@@ -24,6 +24,7 @@ export default function MyNavigationMenu() {
             height={40}
             alt="Picture of the author"
             className="rounded-full"
+            priority
           />
         </Link>
       </div>

@@ -1,7 +1,10 @@
+// src/components/ClientBlogPost.tsx
+
 'use client';
 
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { useMDXComponents } from '@/mdx-components';
+import { format, parseISO } from 'date-fns';
 
 interface BlogPostProps {
   mdxContent: MDXRemoteSerializeResult;
@@ -15,7 +18,7 @@ interface BlogPostProps {
 
 export default function ClientBlogPost({ mdxContent, data }: BlogPostProps) {
   const components = useMDXComponents({});
-  const formattedDate = new Date(data.date).toLocaleDateString(); // Format the date as a string
+  const formattedDate = format(parseISO(data.date), 'MMMM d, yyyy');
 
   return (
     <article className="prose lg:prose-xl mx-auto my-8">

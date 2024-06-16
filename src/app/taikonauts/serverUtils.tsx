@@ -4,14 +4,14 @@ import { join } from 'path';
 import { cache } from 'react';
 import 'server-only';
 
-const API_KEY = process.env.API_KEY;
+const LOOPERLANDS_API_KEY = process.env.LOOPERLANDS_API_KEY;
 
-if (!API_KEY) {
+if (!LOOPERLANDS_API_KEY) {
   throw new Error('API_KEY is not defined');
 }
 
 const headers = {
-  'x-api-key': API_KEY as string,
+  'x-api-key': LOOPERLANDS_API_KEY as string,
 };
 
 // Fetch XP for a specific edition with retry mechanism
