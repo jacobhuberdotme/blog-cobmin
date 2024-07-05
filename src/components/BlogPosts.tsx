@@ -85,7 +85,7 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ posts }) => {
               )}
               <CardHeader className="p-4 flex-shrink-0">
                 <CardTitle className="text-3xl">{filteredPosts[0].title}</CardTitle>
-                <CardDescription>{new Date(filteredPosts[0].date).toLocaleDateString()}</CardDescription>
+                <CardDescription>{new Date(filteredPosts[0].date).toLocaleDateString('en-US', { timeZone: 'UTC' })}</CardDescription>
               </CardHeader>
               <CardContent className="p-4 pt-0 flex-grow">
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -119,7 +119,7 @@ const BlogPosts: React.FC<BlogPostsProps> = ({ posts }) => {
                 <div className="p-4 flex flex-col justify-between w-full sm:w-2/3">
                   <CardHeader className="p-2 flex-shrink-0">
                     <CardTitle className="text-xl">{post.title}</CardTitle>
-                    <CardDescription>{new Date(post.date).toLocaleDateString()}</CardDescription>
+                    <CardDescription>{new Date(post.date).toLocaleDateString('en-US', { timeZone: 'UTC' })}</CardDescription>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {post.tags.map(tag => (
                         <Badge key={tag} variant="default" className="pointer-events-none">{tag}</Badge>

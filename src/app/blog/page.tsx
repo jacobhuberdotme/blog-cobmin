@@ -15,13 +15,13 @@ interface Post {
 
 export async function generateMetadata(): Promise<Metadata> {
   const files = fs.readdirSync(path.join(process.cwd(), 'src/data'));
-  
+
   const posts: Post[] = files.map((file) => {
     const slug = file.replace(/\.mdx$/, '');
     const filePath = path.join(process.cwd(), 'src/data', file);
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data } = matter(fileContents);
-    
+
     return {
       slug,
       title: data.title || slug.replace(/-/g, ' '),
