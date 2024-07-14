@@ -22,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 function getDynamicPages(): MetadataRoute.Sitemap {
   const baseUrl = 'https://cobmin.com';
-  const dataDirectory = path.join(process.cwd(), 'src/data');
+  const dataDirectory = path.join(process.cwd(), 'src/data/blog');
   const files = fs.readdirSync(dataDirectory);
 
   const posts = files.map((file) => {

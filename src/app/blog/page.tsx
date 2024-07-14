@@ -14,11 +14,11 @@ interface Post {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const files = fs.readdirSync(path.join(process.cwd(), 'src/data'));
+  const files = fs.readdirSync(path.join(process.cwd(), 'src/data/blog'));
 
   const posts: Post[] = files.map((file) => {
     const slug = file.replace(/\.mdx$/, '');
-    const filePath = path.join(process.cwd(), 'src/data', file);
+    const filePath = path.join(process.cwd(), 'src/data/blog', file);
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data } = matter(fileContents);
 
@@ -59,11 +59,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function BlogPage() {
-  const files = fs.readdirSync(path.join(process.cwd(), 'src/data'));
+  const files = fs.readdirSync(path.join(process.cwd(), 'src/data/blog'));
 
   const posts: Post[] = files.map((file) => {
     const slug = file.replace(/\.mdx$/, '');
-    const filePath = path.join(process.cwd(), 'src/data', file);
+    const filePath = path.join(process.cwd(), 'src/data/blog', file);
     const fileContents = fs.readFileSync(filePath, 'utf8');
     const { data } = matter(fileContents);
 

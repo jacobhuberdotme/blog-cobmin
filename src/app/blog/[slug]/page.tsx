@@ -21,14 +21,14 @@ interface Frontmatter {
 }
 
 export async function generateStaticParams() {
-  const files = fs.readdirSync(path.join(process.cwd(), 'src/data'));
+  const files = fs.readdirSync(path.join(process.cwd(), 'src/data/blog'));
   return files.map((file) => ({
     slug: file.replace(/\.mdx$/, ''),
   }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const filePath = path.join(process.cwd(), 'src/data', `${params.slug}.mdx`);
+  const filePath = path.join(process.cwd(), 'src/data/blog', `${params.slug}.mdx`);
   const source = fs.readFileSync(filePath, 'utf8');
   const { data: frontmatter } = matter(source);
 
@@ -61,7 +61,7 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-  const filePath = path.join(process.cwd(), 'src/data', `${params.slug}.mdx`);
+  const filePath = path.join(process.cwd(), 'src/data/blog', `${params.slug}.mdx`);
   const source = fs.readFileSync(filePath, 'utf8');
 
   const { content, data: frontmatter } = matter(source);
