@@ -19,7 +19,7 @@ export default function MyNavigationMenu() {
       <div className="flex items-center">
         <Link href="/">
           <Image
-            src="/profile.png"
+            src="/icon.jpg"
             width={40}
             height={40}
             alt="Picture of the author"
