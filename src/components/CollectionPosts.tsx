@@ -66,7 +66,7 @@ const CollectionPosts: React.FC<CollectionPostsProps> = ({ collections }) => {
         </ToggleGroup>
       </div>
       {filteredCollections.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-4">
           <Link href={`/my-collections/${filteredCollections[0].slug}`} className="block">
             <Card className="h-full flex flex-col justify-between">
               {filteredCollections[0].image && (
@@ -103,14 +103,14 @@ const CollectionPosts: React.FC<CollectionPostsProps> = ({ collections }) => {
             <Link href={`/my-collections/${collection.slug}`} className="block w-full">
               <Card className="h-full flex flex-col sm:flex-row">
                 {collection.image && (
-                  <div className="relative w-full sm:w-1/3 h-48 sm:h-full rounded-t-xl sm:rounded-l-xl overflow-hidden">
+                  <div className="relative w-full sm:w-1/3 h-48 sm:h-full rounded-l-xl sm:rounded-l-xl overflow-hidden">
                     <Image
                       src={collection.image}
                       alt={collection.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover' }}
-                      className="rounded-t-xl sm:rounded-l-xl"
+                      className="rounded-l-xl sm:rounded-l-xl"
                     />
                   </div>
                 )}
@@ -124,9 +124,9 @@ const CollectionPosts: React.FC<CollectionPostsProps> = ({ collections }) => {
                       ))}
                     </div>
                   </CardHeader>
-                  <CardContent className="p-2 pt-0 flex-grow">
+                  {/* <CardContent className="p-2 pt-0 flex-grow">
                     <p className="text-sm">{collection.description}</p>
-                  </CardContent>
+                  </CardContent> */}
                 </div>
               </Card>
             </Link>

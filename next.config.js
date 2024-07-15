@@ -1,5 +1,5 @@
-const withMDX = require('@next/mdx')()
- 
+const withMDX = require('@next/mdx')();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Configure `pageExtensions` to include MDX files
@@ -12,8 +12,14 @@ const nextConfig = {
         port: '',
         pathname: '/gruWCdbBNGKihc36vW9LmH6FZ9yyX2Foe6ItmZzpK-Q/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'loopexchange.art',
+        port: '',
+        pathname: '/collection/watercolordreams/**',
+      },
     ],
   },
-}
- 
-module.exports = withMDX(nextConfig)
+};
+
+module.exports = withMDX(nextConfig);

@@ -39,7 +39,7 @@ export default function ClientCollectionPost({ mdxContent, frontmatter }: Collec
         <h1 className="text-4xl font-bold mb-2">{frontmatter.title}</h1>
         <p className="text-gray-600">{frontmatter.description}</p>
         {frontmatter.blockchain && (
-          <p className="text-lg mt-4">Blockchain: {frontmatter.blockchain}</p>
+          <p className="text-lg mt-4">Chain: {frontmatter.blockchain}</p>
         )}
         {frontmatter.marketplace && (
           <p className="text-lg mt-4">
