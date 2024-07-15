@@ -12,8 +12,8 @@ export default function MyFooter() {
           <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Home
           </Link>
-          <Link href="/taikonauts" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Taikonauts
+          <Link href="/my-collections" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              My Collections
           </Link>
           <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Blog
