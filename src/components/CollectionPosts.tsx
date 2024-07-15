@@ -103,14 +103,14 @@ const CollectionPosts: React.FC<CollectionPostsProps> = ({ collections }) => {
             <Link href={`/my-collections/${collection.slug}`} className="block w-full">
               <Card className="h-full flex flex-col sm:flex-row">
                 {collection.image && (
-                  <div className="relative w-full sm:w-1/3 h-48 sm:h-full rounded-l-xl sm:rounded-l-xl overflow-hidden">
+                  <div className="relative w-full sm:w-1/3 h-48 sm:h-full rounded-t-xl sm:rounded-tl-xl sm:rounded-tr-none overflow-hidden">
                     <Image
                       src={collection.image}
                       alt={collection.title}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover' }}
-                      className="rounded-l-xl sm:rounded-l-xl"
+                      className="rounded-t-xl sm:rounded-l-xl sm:rounded-r-none"
                     />
                   </div>
                 )}
@@ -124,9 +124,6 @@ const CollectionPosts: React.FC<CollectionPostsProps> = ({ collections }) => {
                       ))}
                     </div>
                   </CardHeader>
-                  {/* <CardContent className="p-2 pt-0 flex-grow">
-                    <p className="text-sm">{collection.description}</p>
-                  </CardContent> */}
                 </div>
               </Card>
             </Link>
