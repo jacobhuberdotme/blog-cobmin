@@ -1,4 +1,4 @@
-// pages/communitycryptoshop/page.tsx
+"use client"
 
 import { Inter as FontSans } from 'next/font/google';
 import { useEffect, useState } from 'react';
