@@ -9,11 +9,10 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   navigationMenuTriggerStyle,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
 } from "@/components/ui/navigation-menu";
 import { ModeToggle } from "./ui/mode-toggle";
 import Image from "next/image";
+import ConnectButton from "./ConnectButton";
 
 const menuItems = [
   { title: "Blog", href: "/blog" },
@@ -98,6 +97,9 @@ export default function MyNavigationMenu() {
             </div>
           )}
         </div>
+      </div>
+      <div className="flex items-center ml-4">
+        <ConnectButton />
       </div>
       <div className="flex items-center ml-4">
         <ModeToggle />

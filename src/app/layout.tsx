@@ -6,6 +6,11 @@ import MyNavigationMenu from '@/components/my-navigation-menu';
 import { metadata as siteMetadata } from '@/lib/metadata';
 import { ThemeProvider } from '@/components/theme-provider';
 import MyFooter from '@/components/my-footer-menu';
+import { cookieToInitialState } from 'wagmi'
+
+import { config } from '@/config'
+import Web3ModalProvider from '@/context'
+import { headers } from 'next/headers';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -21,6 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const initialState = cookieToInitialState(config, headers().get('cookie'))
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -35,11 +41,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           enableSystem
           disableTransitionOnChange
         >
+          <Web3ModalProvider initialState={initialState}>
           <MyNavigationMenu />
           <div className="flex-grow flex justify-center p-2">
             <div className="w-full max-w-4xl">{children}</div>
           </div>
           <MyFooter />
+        </Web3ModalProvider>
         </ThemeProvider>
       </body>
     </html>
