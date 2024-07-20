@@ -54,6 +54,9 @@ export default function MyNavigationMenu() {
                 </Link>
               </NavigationMenuItem>
             ))}
+            <NavigationMenuItem>
+              <ConnectButton />
+            </NavigationMenuItem>
           </NavigationMenuList>
         </div>
         <div className="flex md:hidden">
@@ -93,13 +96,13 @@ export default function MyNavigationMenu() {
                     </Link>
                   </NavigationMenuItem>
                 ))}
+                <NavigationMenuItem>
+                  <ConnectButton />
+                </NavigationMenuItem>
               </NavigationMenuList>
             </div>
           )}
         </div>
-      </div>
-      <div className="flex items-center ml-4">
-        <ConnectButton />
       </div>
       <div className="flex items-center ml-4">
         <ModeToggle />
