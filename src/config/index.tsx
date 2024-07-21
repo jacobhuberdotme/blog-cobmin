@@ -11,7 +11,7 @@ const metadata = {
   name: "Cobmin's Stuff",
   description: "Sharing my interests, thoughts, and projects to inspire and help others.",
   url: 'https://cobmin.com', // origin must match your domain & subdomain
-  icons: ['https://cobmin.com/CommunityCryptoShopLogo.png']
+  icons: ['https://cobmin.com/blog-images/avatar.png']
 }
 
 // Create wagmiConfig
