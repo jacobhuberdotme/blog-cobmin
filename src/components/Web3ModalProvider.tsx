@@ -1,3 +1,4 @@
+// src/context/Web3ModalProvider.ts
 'use client';
 
 import React, { ReactNode } from 'react';
@@ -12,7 +13,6 @@ const queryClient = new QueryClient();
 
 if (!projectId) throw new Error('Project ID is not defined');
 
-// Create modal
 createWeb3Modal({
   wagmiConfig: config,
   projectId,
