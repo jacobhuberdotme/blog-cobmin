@@ -1,6 +1,7 @@
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { cookieStorage, createStorage } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
+import { authConnector } from '@web3modal/wagmi'
 
 // Get projectId from https://cloud.walletconnect.com
 export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
@@ -21,6 +22,16 @@ export const config = defaultWagmiConfig({
   projectId,
   metadata,
   ssr: true,
+  // connectors: [
+  //   authConnector({
+  //     chains,
+  //     options: { projectId },
+  //     email: true, // default to true
+  //     socials: ['x', 'apple'],
+  //     showWallets: true, // default to true
+  //     walletFeatures: true // default to true
+  //   })
+  // ],
   storage: createStorage({
     storage: cookieStorage
   }),
